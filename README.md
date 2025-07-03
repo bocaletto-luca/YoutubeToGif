@@ -7,11 +7,11 @@ Youtube To Gif is a lightweight Python script youtube2gif.py that leverages syst
 
 ## Example GIF Create
 
-
-<div align="center">
-  [![GIF Preview di Luca Bocaletto](luca-bocaletto.gif)](https://www.youtube.com/watch?v=kX8hfK0PrHM)
-</div>
-
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=kX8hfK0PrHM">
+    <img src="luca-bocaletto.gif" alt="GIF Preview di Luca Bocaletto">
+  </a>
+</p>
 
 ---
 
