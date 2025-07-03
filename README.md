@@ -5,6 +5,12 @@ youtube2gif.py is a lightweight Python script that leverages system-installed yt
 
 ---
 
+## Example GIF Create
+
+[![GIF Preview di Luca Bocaletto](luca-bocaletto.gif)](https://www.youtube.com/watch?v=kX8hfK0PrHM)
+
+---
+
 ## Table of Contents
 
 - [Features](#features)  
