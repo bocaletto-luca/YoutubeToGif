@@ -1,7 +1,7 @@
 # YoutubeToGif
 #### Author: Bocaletto Luca
 
-A simple Python script to download a YouTube video (or a segment of it) and convert it into an animated GIF using system-installed `yt-dlp` and `ffmpeg`.
+youtube2gif.py is a lightweight Python script that leverages system-installed yt-dlp and FFmpeg to download YouTube videos (or specific segments) and convert them into high-quality animated GIFs. It supports full-length or custom slices with configurable FPS and width, generates optimized palettes for vibrant colors, and automatically cleans up temporary files.
 
 ---
 
