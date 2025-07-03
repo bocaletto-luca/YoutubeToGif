@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YoutubeToGif – Convert YouTube to GIF | Bocaletto Luca</title>
+  <meta name="description" content="youtube2gif.py is a lightweight Python script leveraging yt-dlp and ffmpeg to download YouTube videos and convert them into high-quality animated GIFs.">
+  <meta name="keywords" content="YouTube to GIF, yt-dlp, ffmpeg, Python script, video to GIF, open source, GPL-3.0">
+  <meta name="author" content="Bocaletto Luca">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://github.com/bocaletto-luca/YoutubeToGif">
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="YoutubeToGif – Convert YouTube to GIF">
+  <meta property="og:description" content="Lightweight Python script to download YouTube videos and convert them to animated GIFs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/bocaletto-luca/YoutubeToGif">
+  <meta property="og:image" content="https://raw.githubusercontent.com/bocaletto-luca/YoutubeToGif/main/luca-bocaletto.gif">
+  <style>
+    body { font-family:sans-serif; max-width:800px; margin:2rem auto; line-height:1.6; padding:0 1rem; }
+    h1,h2,h3 { color:#333; }
+    code { background:#f4f4f4; padding:0.2em 0.4em; border-radius:3px; }
+    pre { background:#f9f9f9; padding:1rem; overflow-x:auto; }
+    a { color:#0366d6; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    nav ul { list-style:none; padding-left:0; }
+    nav li { margin:0.3em 0; }
+    nav li ul { margin-left:1.2em; }
+    footer { text-align:center; margin-top:2rem; font-size:0.9em; color:#666; }
+    img { max-width:100%; display:block; margin:1rem 0; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>YoutubeToGif</h1>
+    <p>Author: <a href="https://github.com/bocaletto-luca">Bocaletto Luca</a></p>
+  </header>
+
+  <section id="hero">
+    <a href="https://www.youtube.com/watch?v=kX8hfK0PrHM">
+      <img src="luca-bocaletto.gif" alt="GIF Preview by Luca Bocaletto">
+    </a>
+    <p><strong>youtube2gif.py</strong> is a lightweight Python script that leverages system-installed <code>yt-dlp</code> and <code>ffmpeg</code> to download YouTube videos (or specific segments) and convert them into high-quality animated GIFs. It supports full-length or custom slices with configurable FPS and width, generates optimized palettes for vibrant colors, and automatically cleans up temporary files.</p>
+  </section>
+
+  <nav aria-label="Table of Contents">
+    <h2>Table of Contents</h2>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li>
+        <a href="#usage">Usage</a>
+        <ul>
+          <li><a href="#full-length-gif">Full-length GIF</a></li>
+          <li><a href="#custom-slice-gif">Custom slice GIF</a></li>
+          <li><a href="#all-options">All options</a></li>
+        </ul>
+      </li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#repository-structure">Repository Structure</a></li>
+      <li><a href="#author">Author</a></li>
+      <li><a href="#license">License</a></li>
+    </ul>
+  </nav>
+
+  <section id="features">
+    <h2>Features</h2>
+    <ul>
+      <li>Download any public YouTube video in the best available quality</li>
+      <li>Two-pass color palette generation for optimal GIF colors</li>
+      <li>Support for full-length conversion or custom start/duration slices</li>
+      <li>Configurable FPS and output width</li>
+      <li>No Python libraries required beyond the standard library—relies on <code>yt-dlp</code> and <code>ffmpeg</code></li>
+    </ul>
+  </section>
+
+  <section id="prerequisites">
+    <h2>Prerequisites</h2>
+    <p><strong>Python 3.6+</strong> (standard library only)<br>
+       <strong>yt-dlp</strong> (YouTube downloader)<br>
+       <strong>ffmpeg</strong> (video processing & GIF creation)
+    </p>
+    <p>On Debian/Ubuntu:</p>
+    <pre><code>sudo apt update
+sudo apt install yt-dlp ffmpeg python3</code></pre>
+    <p>Verify on your <code>PATH</code>:</p>
+    <pre><code>which yt-dlp
+which ffmpeg</code></pre>
+  </section>
+
+  <section id="installation">
+    <h2>Installation</h2>
+    <ol>
+      <li>Clone the repo or download <code>youtube2gif.py</code>:
+        <pre><code>git clone https://github.com/bocaletto-luca/YoutubeToGif.git
+cd YoutubeToGif</code></pre>
+      </li>
+      <li>Make the script executable:
+        <pre><code>chmod +x youtube2gif.py</code></pre>
+      </li>
+      <li>Run it—no further setup needed.</li>
+    </ol>
+  </section>
+
+  <section id="usage">
+    <h2>Usage</h2>
+    <pre><code>./youtube2gif.py URL [--start START_SEC] [--duration DURATION_SEC] [--full] [--output FILE] [--fps N] [--width PX]</code></pre>
+
+    <h3 id="full-length-gif">Full-length GIF</h3>
+    <pre><code>./youtube2gif.py "https://www.youtube.com/watch?v=kX8hfK0PrHM" --full --output full.gif</code></pre>
+
+    <h3 id="custom-slice-gif">Custom slice GIF</h3>
+    <pre><code>./youtube2gif.py "https://youtu.be/kX8hfK0PrHM" \
+  --start 10 \
+  --duration 5 \
+  --output clip.gif</code></pre>
+
+    <h3 id="all-options">All options</h3>
+    <pre><code>Positional argument:
+  url                   YouTube video URL
+
+Optional arguments:
+  --start START_SEC     Start time in seconds (default: 0.0)
+  --duration DURATION   Duration in seconds (default: None if --full)
+  --full                Convert the full video (overrides --duration)
+  --output FILE         Output GIF filename (default: out.gif)
+  --fps N               Frames per second (default: 10)
+  --width PX            Max width in pixels (default: 320)
+  -h, --help            Show this help message and exit</code></pre>
+  </section>
+
+  <section id="how-it-works">
+    <h2>How It Works</h2>
+    <ol>
+      <li><strong>Download</strong>: uses <code>yt-dlp</code> to fetch and merge MP4 video+audio.</li>
+      <li><strong>Palette Generation</strong>: runs <code>ffmpeg</code> with <code>palettegen</code> for optimal colors.</li>
+      <li><strong>GIF Creation</strong>: runs <code>ffmpeg</code> with <code>paletteuse</code> to produce the final GIF.</li>
+      <li><strong>Cleanup</strong>: removes all temporary files.</li>
+    </ol>
+  </section>
+
+  <section id="repository-structure">
+    <h2>Repository Structure</h2>
+    <pre><code>YoutubeToGif/
+├── index.html
+├── LICENSE
+└── youtube2gif.py</code></pre>
+  </section>
+
+  <section id="author">
+    <h2>Author</h2>
+    <p><a href="https://github.com/bocaletto-luca">@bocaletto-luca</a></p>
+  </section>
+
+  <section id="license">
+    <h2>License</h2>
+    <p>Released under the <a href="LICENSE">GPL-3.0 License</a>.</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Bocaletto Luca. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
