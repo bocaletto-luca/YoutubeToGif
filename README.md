@@ -3,4 +3,5 @@ Youtube To Gif - By Bocaletto Luca
 
 ## Usage
 
-    python yt2gif.py "https://youtu.be/VIDEO_ID" -s 10 -d 3 -o clip.gif
+    chmod +x youtube2gif.py
+    ./youtube2gif.py https://youtu.be/kX8hfK0PrHM 10 5 clip.gif
