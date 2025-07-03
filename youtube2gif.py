@@ -1,30 +1,88 @@
-# pip install pytube moviepy
+#!/usr/bin/env python3
+"""
+youtube2gif.py
 
-import os, tempfile, argparse
-from pytube import YouTube
-from moviepy.editor import VideoFileClip
+Scarica un video YouTube e lo converte in una GIF, usando solo yt-dlp e ffmpeg.
+Dipendenze di sistema (installali se non ce li hai):
+    sudo apt install yt-dlp ffmpeg
 
-def yt_to_gif(url, start, duration, out):
-    # 1) download
-    yt = YouTube(url)
-    stream = yt.streams.filter(progressive=True, file_extension='mp4')\
-                     .order_by('resolution').desc().first()
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4').name
-    stream.download(filename=tmp)
+Uso:
+    python3 youtube2gif.py URL [start_sec] [duration_sec] [output.gif]
 
-    # 2) trim & convert
-    clip = VideoFileClip(tmp).subclip(start, start + duration)
-    clip.write_gif(out, fps=12, program='ffmpeg')
-    clip.close()
+Esempio:
+    python3 youtube2gif.py https://youtu.be/kX8hfK0PrHM 10 5 clip.gif
+"""
 
-    # 3) cleanup
-    os.remove(tmp)
+import sys
+import os
+import subprocess
+import tempfile
+import shutil
 
-if __name__ == '__main__':
-    p = argparse.ArgumentParser(description="YouTube→GIF converter")
-    p.add_argument('url', help="YouTube video URL")
-    p.add_argument('-s','--start', type=float, default=0, help="start time (sec)")
-    p.add_argument('-d','--duration', type=float, default=5, help="duration (sec)")
-    p.add_argument('-o','--output', default='out.gif', help="output GIF file")
-    args = p.parse_args()
-    yt_to_gif(args.url, args.start, args.duration, args.output)
+def die(msg, code=1):
+    print("ERROR:", msg, file=sys.stderr)
+    sys.exit(code)
+
+def which(cmd):
+    path = shutil.which(cmd)
+    if not path:
+        die(f"'{cmd}' non trovato. Installa con: sudo apt install {cmd}")
+    return path
+
+def run(cmd, **kw):
+    print("> " + " ".join(cmd))
+    res = subprocess.run(cmd, **kw)
+    if res.returncode != 0:
+        die(f"comando fallito: {' '.join(cmd)} (rc={res.returncode})")
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        sys.exit(0)
+
+    url      = sys.argv[1]
+    start    = sys.argv[2] if len(sys.argv) > 2 else "0"
+    duration = sys.argv[3] if len(sys.argv) > 3 else "5"
+    outgif   = sys.argv[4] if len(sys.argv) > 4 else "out.gif"
+
+    yt       = which("yt-dlp")
+    ffmpeg   = which("ffmpeg")
+
+    tmpdir = tempfile.mkdtemp(prefix="yt2gif_")
+    try:
+        mp4 = os.path.join(tmpdir, "video.mp4")
+        pal = os.path.join(tmpdir, "palette.png")
+
+        # 1) Download + merge best video+audio
+        run([yt,
+             "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
+             "--merge-output-format", "mp4",
+             "-o", mp4,
+             url])
+
+        # 2) Genera palette
+        run([ffmpeg,
+             "-v", "warning",
+             "-ss", start,
+             "-t", duration,
+             "-i", mp4,
+             "-vf", "fps=10,scale=320:-1:flags=lanczos,palettegen",
+             "-y", pal])
+
+        # 3) Crea la GIF
+        run([ffmpeg,
+             "-v", "warning",
+             "-ss", start,
+             "-t", duration,
+             "-i", mp4,
+             "-i", pal,
+             "-filter_complex", "fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse",
+             "-y", outgif])
+
+        print(f"\n✔ GIF salvata in: {outgif}")
+
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+if __name__ == "__main__":
+    main()
