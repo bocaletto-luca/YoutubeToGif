@@ -1,6 +1,5 @@
 # Youtube To Gif
-##### 
-Author: Bocaletto Luca
+##### Author: Bocaletto Luca
 Language: English,Italian.
 OS: Linux
 Made With: Python
