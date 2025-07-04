@@ -2,14 +2,14 @@
 """
 youtube2gif.py
 
-Download a YouTube video and convert it into a GIF using only yt-dlp and ffmpeg.
-System dependencies (install if you don't have them):
+Scarica un video YouTube e lo converte in una GIF, usando solo yt-dlp e ffmpeg.
+Dipendenze di sistema (installali se non ce li hai):
     sudo apt install yt-dlp ffmpeg
 
-Usage:
+Uso:
     python3 youtube2gif.py URL [start_sec] [duration_sec] [output.gif]
 
-Example:
+Esempio:
     python3 youtube2gif.py https://youtu.be/kX8hfK0PrHM 10 5 clip.gif
 """
 
@@ -26,14 +26,14 @@ def die(msg, code=1):
 def which(cmd):
     path = shutil.which(cmd)
     if not path:
-        die(f"'{cmd}' not found. Install with: sudo apt install {cmd}")
+        die(f"'{cmd}' non trovato. Installa con: sudo apt install {cmd}")
     return path
 
 def run(cmd, **kw):
     print("> " + " ".join(cmd))
     res = subprocess.run(cmd, **kw)
     if res.returncode != 0:
-        die(f"command failed: {' '.join(cmd)} (rc={res.returncode})")
+        die(f"comando fallito: {' '.join(cmd)} (rc={res.returncode})")
 
 def main():
     if len(sys.argv) < 2:
@@ -53,14 +53,14 @@ def main():
         mp4 = os.path.join(tmpdir, "video.mp4")
         pal = os.path.join(tmpdir, "palette.png")
 
-        # 1) Download and merge best video+audio
+        # 1) Download + merge best video+audio
         run([yt,
              "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
              "--merge-output-format", "mp4",
              "-o", mp4,
              url])
 
-        # 2) Generate palette
+        # 2) Genera palette
         run([ffmpeg,
              "-v", "warning",
              "-ss", start,
@@ -69,7 +69,7 @@ def main():
              "-vf", "fps=10,scale=320:-1:flags=lanczos,palettegen",
              "-y", pal])
 
-        # 3) Create the GIF
+        # 3) Crea la GIF
         run([ffmpeg,
              "-v", "warning",
              "-ss", start,
@@ -79,7 +79,7 @@ def main():
              "-filter_complex", "fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse",
              "-y", outgif])
 
-        print(f"\n✔ GIF saved to: {outgif}")
+        print(f"\n✔ GIF salvata in: {outgif}")
 
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
